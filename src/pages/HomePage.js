@@ -3,7 +3,7 @@ import { ProductProvider, ProductContext } from "../context/context";
 
 const HomePage = () => {
   const values = useContext(ProductContext);
-  console.log('stateFromHomePage:', values);
+  console.log("stateFromHomePage:", values);
   return (
     <>
       <ProductProvider>

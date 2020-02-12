@@ -15,7 +15,7 @@ const Navbar = () => {
   } = values;
 
   return (
-    <ProductProvider>
+    // <ProductProvider>
       <NavWrapper>
         <div className="nav-center">
           <FaBars className="nav-icon" onClick={handleSidebar} />
@@ -26,7 +26,7 @@ const Navbar = () => {
           </div>
         </div>
       </NavWrapper>
-    </ProductProvider>
+    // </ProductProvider>
   );
 };
 

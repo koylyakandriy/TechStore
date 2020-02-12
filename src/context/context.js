@@ -8,7 +8,8 @@ const ProductProvider = ({ children }) => {
     sidebarOpen: false,
     cartOpen: false,
     cartItems: 0,
-    links: linkData
+    links: linkData,
+    cart: []
   });
 
   const handleSidebar = () => {

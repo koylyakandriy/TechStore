@@ -1,15 +1,16 @@
-import React, { useContext } from "react";
-import { ProductProvider, ProductContext } from "../context/context";
+import React from "react";
+import { Link } from "react-router-dom";
+
+import Hero from "../components/Hero";
 
 const HomePage = () => {
-  const values = useContext(ProductContext);
-  console.log("stateFromHomePage:", values);
   return (
     <>
-      <ProductProvider>
-        <h3 onClick={values.handleSidebar}>Hello</h3>
-      </ProductProvider>
-      <h1>Home Page</h1>
+      <Hero title="awesome gadgets" max="true">
+        <Link className="main-link" to="/products" style={{ margin: "2rem" }}>
+          Our products
+        </Link>
+      </Hero>
     </>
   );
 };

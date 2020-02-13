@@ -14,7 +14,7 @@ const Footer = () => {
       <div className="container">
         <div className="row py-3">
           <div className="col-md-6 align-items-center">
-            <p className="text-capitalize m-0">
+            <p className="text-capitalize mb-3 mb-md-0 m-0 text-center text-md-left">
               copyright &copy; tech store {new Date().getFullYear()} all rights
               reserved
             </p>

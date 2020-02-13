@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { linkData } from "./linkData";
 import { socialData } from "./socialData";
+import { items } from "./productData";
 
 const ProductContext = React.createContext();
 
@@ -11,8 +12,18 @@ const ProductProvider = ({ children }) => {
     cartItems: 0,
     links: linkData,
     socialLinks: socialData,
-    cart: []
+    cart: [],
+    cartItem: 0,
+    cartSubTitle: 0,
+    cartTax: 0,
+    cartTotal: 0,
+    storeProducts: [],
+    filteredProducts: [],
+    singleProduct: {},
+    loading: true
   });
+
+  useEffect(() => {}, []);
 
   const handleSidebar = () => {
     setState({ ...state, sidebarOpen: !state.sidebarOpen });

@@ -6,8 +6,9 @@ import { ProductContext } from "../context/context";
 const Sidecart = () => {
   const values = useContext(ProductContext);
   const {
-    state: { cartOpen, cart },
-    closeCart
+    state: {  cart },
+    closeCart,
+    cartOpen
   } = values;
 
   return (

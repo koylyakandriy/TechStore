@@ -2,30 +2,26 @@ import React, { useContext } from "react";
 import { FaBars, FaCartPlus } from "react-icons/fa";
 import styled from "styled-components";
 
-import { ProductProvider, ProductContext } from "../context/context";
+import { ProductContext } from "../context/context";
 import logo from "../images/logo.svg";
 
 const Navbar = () => {
   const values = useContext(ProductContext);
 
-  const {
-    state: { cartItems },
-    handleSidebar,
-    handleCart
-  } = values;
+  const { cartItems, handleSidebar, handleCart } = values;
 
   return (
     // <ProductProvider>
-      <NavWrapper>
-        <div className="nav-center">
-          <FaBars className="nav-icon" onClick={handleSidebar} />
-          <img src={logo} alt="tech store logo" />
-          <div className="nav-cart">
-            <FaCartPlus className="nav-icon" onClick={handleCart} />
-            <div className="cart-items">{cartItems}</div>
-          </div>
+    <NavWrapper>
+      <div className="nav-center">
+        <FaBars className="nav-icon" onClick={handleSidebar} />
+        <img src={logo} alt="tech store logo" />
+        <div className="nav-cart">
+          <FaCartPlus className="nav-icon" onClick={handleCart} />
+          <div className="cart-items">{cartItems}</div>
         </div>
-      </NavWrapper>
+      </div>
+    </NavWrapper>
     // </ProductProvider>
   );
 };

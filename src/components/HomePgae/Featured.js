@@ -9,8 +9,6 @@ const Featured = () => {
   const values = useContext(ProductContext);
   const { featureProducts } = values.state;
 
-  console.log("featureProducts:", featureProducts);
-
   return (
     <section className="py-5">
       <div className="container">

@@ -8,22 +8,16 @@ const ProductContext = React.createContext();
 const ProductProvider = ({ children }) => {
   const [state, setState] = useState({
     sidebarOpen: false,
-    // cartOpen: false,
-    // cartItems: 0,
     links: linkData,
     socialLinks: socialData,
-    // cart: [],
-    // cartSubTitle: 0,
-    // cartTax: 0,
-    // cartTotal: 0,
     storeProducts: [],
     filteredProducts: [],
     featureProducts: [],
     singleProduct: {},
-    loading: false
+    loading: true
   });
   const [cartItems, setCartItems] = useState(0);
-  const [cartSubTitle, setCartSubTitle] = useState(0);
+  const [cartSubTotal, setcartSubTotal] = useState(0);
   const [cartTotal, setCartTotal] = useState(0);
   const [cartTax, setCartTax] = useState(0);
   const [cartOpen, setCartOpen] = useState(false);
@@ -31,6 +25,11 @@ const ProductProvider = ({ children }) => {
 
   useEffect(() => {
     setProducts(items);
+  }, []);
+
+  useEffect(() => {
+    syncStorage();
+    addTotals();
   }, [cart]);
 
   const setProducts = products => {
@@ -54,20 +53,34 @@ const ProductProvider = ({ children }) => {
     });
 
     getStorageCart();
-    addTotals();
   };
 
-  const getStorageCart = () => [];
+  const getStorageCart = () => {
+    let cart;
+    if (localStorage.getItem("cart")) {
+      cart = JSON.parse(localStorage.getItem("cart"));
+    } else {
+      cart = [];
+    }
 
-  const getStorageProduct = () => [];
+    setCart(cart);
+  };
+
+  const getStorageProduct = () => {
+    return localStorage.getItem("singleProduct")
+      ? JSON.parse(localStorage.getItem("singleProduct"))
+      : {};
+  };
 
   const getTotals = () => {
     let subTotal = 0;
     let cartItems = 0;
-    cart.forEach(item => {
-      subTotal += parseFloat(item.total.toFixed(2));
-      cartItems += item.count;
-    });
+
+    cart &&
+      cart.forEach(item => {
+        subTotal += parseFloat(item.total.toFixed(2));
+        cartItems += item.count;
+      });
 
     let tax = parseFloat((subTotal * 0.2).toFixed(2));
     let total = parseFloat((subTotal + tax).toFixed(2));
@@ -83,12 +96,14 @@ const ProductProvider = ({ children }) => {
   const addTotals = () => {
     const totals = getTotals();
     setCartItems(totals.cartItems);
-    setCartSubTitle(totals.subTotal);
+    setcartSubTotal(totals.subTotal);
     setCartTax(totals.tax);
     setCartTotal(totals.total);
   };
 
-  const syncStorage = () => {};
+  const syncStorage = () => {
+    localStorage.setItem("cart", JSON.stringify(cart));
+  };
 
   const addToCart = id => {
     let tempCart = [...cart];
@@ -108,11 +123,13 @@ const ProductProvider = ({ children }) => {
     setCart(tempCart);
     openCart();
     addTotals();
-    // syncStorage();
+    syncStorage();
   };
-  
+
   const setSingleProduct = id => {
-    console.log("setSingleProduct:", id);
+    let product = state.storeProducts.find(item => item.id === id);
+    localStorage.setItem("singleProduct", JSON.stringify(product));
+    setState({ ...state, singleProduct: product, loading: false });
   };
 
   const handleSidebar = () => {
@@ -131,20 +148,41 @@ const ProductProvider = ({ children }) => {
     setCartOpen(true);
   };
 
+  const increment = id => {
+    console.log("id:", id);
+  };
+
+  const decrement = id => {
+    console.log("id:", id);
+  };
+
+  const removeItem = id => {
+    console.log("id:", id);
+  };
+
+  const clearCart = () => {
+    console.log("clear cart");
+  };
+
   return (
     <ProductContext.Provider
       value={{
         cartItems,
-        cartSubTitle,
+        cartSubTotal,
         cartTotal,
         cartTax,
+        cartOpen,
+        cart,
+        state,
         handleSidebar,
         handleCart,
         closeCart,
-        cartOpen,
         addToCart,
         setSingleProduct,
-        state
+        increment,
+        decrement,
+        removeItem,
+        clearCart
       }}
     >
       {children}

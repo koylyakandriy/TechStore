@@ -7,7 +7,7 @@ import ProductFilter from "./ProductFilter";
 
 const Products = () => {
   const values = useContext(ProductContext);
-  const { filteredProducts } = values.state;
+  const { filteredProducts } = values;
 
   return (
     <section className="py-5">

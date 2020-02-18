@@ -7,7 +7,7 @@ const ProductFilter = () => {
   const {
     state: { search, price, min, max, company, shipping, storeProducts },
     handleChange,
-    sortData
+    // sortData
   } = values;
 
   let companies = new Set();
@@ -60,7 +60,7 @@ const ProductFilter = () => {
               type="range"
               name="price"
               id="price"
-              step="10"
+              step="5"
               min={min}
               max={max}
               className="filter-price"

@@ -11,7 +11,7 @@ const ProductProvider = ({ children }) => {
     links: linkData,
     socialLinks: socialData,
     storeProducts: [],
-    filteredProducts: [],
+    // filteredProducts: [],
     featureProducts: [],
     singleProduct: {},
     loading: true,
@@ -28,6 +28,7 @@ const ProductProvider = ({ children }) => {
   const [cartTax, setCartTax] = useState(0);
   const [cartOpen, setCartOpen] = useState(false);
   const [cart, setCart] = useState([]);
+  const [filteredProducts, setFilteredProducts] = useState([]);
 
   useEffect(() => {
     setProducts(items);
@@ -54,13 +55,15 @@ const ProductProvider = ({ children }) => {
     setState({
       ...state,
       storeProducts,
-      filteredProducts: storeProducts,
+      // filteredProducts: storeProducts,
       featureProducts,
       singleProduct: getStorageProduct(),
       loading: false,
       price: maxPrice,
       max: maxPrice
     });
+
+    setFilteredProducts(storeProducts);
 
     getStorageCart();
   };
@@ -188,17 +191,52 @@ const ProductProvider = ({ children }) => {
     setCart([]);
   };
 
-  const handleChange = e => {
-    console.log("e:", e);
+  const handleChange = ({ target }) => {
+    const name = target.name;
+    const value = target.type === "checkbox" ? target.checked : target.value;
+
+    setState({ ...state, [name]: value });
   };
 
-  const sortData = () => {
-    console.log(":sortData");
-  };
+  useEffect(() => {
+    const { storeProducts, price, company, shipping, search } = state;
+    let tempProducts = [...storeProducts];
+
+    console.log("shipping:", shipping);
+
+    if (company !== "all") {
+      tempProducts = tempProducts.filter(item => item.company === company);
+    }
+
+    if (shipping) {
+      tempProducts = tempProducts.filter(
+        item => item.freeShipping === shipping
+      );
+    }
+
+    if (search.length > 0) {
+      tempProducts = tempProducts.filter(item => {
+        let tempSearch = search.toLocaleLowerCase();
+        let tempTitle = item.title.toLowerCase().slice(0, search.length);
+        if (tempSearch === tempTitle) return item;
+      });
+    }
+
+    tempProducts = tempProducts.filter(item => item.price <= parseInt(price));
+
+    setFilteredProducts(tempProducts);
+  }, [
+    state.storeProducts,
+    state.company,
+    state.price,
+    state.shipping,
+    state.search
+  ]);
 
   return (
     <ProductContext.Provider
       value={{
+        filteredProducts,
         cartItems,
         cartSubTotal,
         cartTotal,
@@ -215,8 +253,8 @@ const ProductProvider = ({ children }) => {
         decrement,
         removeItem,
         clearCart,
-        handleChange,
-        sortData
+        handleChange
+        // sortData
       }}
     >
       {children}

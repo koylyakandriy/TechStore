@@ -14,7 +14,13 @@ const ProductProvider = ({ children }) => {
     filteredProducts: [],
     featureProducts: [],
     singleProduct: {},
-    loading: true
+    loading: true,
+    search: "",
+    price: 0,
+    min: 0,
+    max: 0,
+    company: "all",
+    shipping: false
   });
   const [cartItems, setCartItems] = useState(0);
   const [cartSubTotal, setcartSubTotal] = useState(0);
@@ -43,13 +49,17 @@ const ProductProvider = ({ children }) => {
       item => item.featured === true
     );
 
+    let maxPrice = Math.max(...storeProducts.map(item => item.price));
+
     setState({
       ...state,
       storeProducts,
       filteredProducts: storeProducts,
       featureProducts,
       singleProduct: getStorageProduct(),
-      loading: false
+      loading: false,
+      price: maxPrice,
+      max: maxPrice
     });
 
     getStorageCart();
@@ -149,19 +159,41 @@ const ProductProvider = ({ children }) => {
   };
 
   const increment = id => {
-    console.log("id:", id);
+    let tempCart = [...cart];
+    const cartItem = tempCart.find(item => item.id === id);
+    cartItem.count++;
+    cartItem.total = parseFloat((cartItem.count * cartItem.price).toFixed(2));
+    setCart([...tempCart]);
   };
 
   const decrement = id => {
-    console.log("id:", id);
+    let tempCart = [...cart];
+    const cartItem = tempCart.find(item => item.id === id);
+    cartItem.count = cartItem.count - 1;
+    if (cartItem.count === 0) {
+      removeItem(id);
+    } else {
+      cartItem.total = parseFloat((cartItem.count * cartItem.price).toFixed(2));
+      setCart([...tempCart]);
+    }
   };
 
   const removeItem = id => {
-    console.log("id:", id);
+    let tempCart = [...cart];
+    tempCart = tempCart.filter(item => item.id !== id);
+    setCart([...tempCart]);
   };
 
   const clearCart = () => {
-    console.log("clear cart");
+    setCart([]);
+  };
+
+  const handleChange = e => {
+    console.log("e:", e);
+  };
+
+  const sortData = () => {
+    console.log(":sortData");
   };
 
   return (
@@ -182,7 +214,9 @@ const ProductProvider = ({ children }) => {
         increment,
         decrement,
         removeItem,
-        clearCart
+        clearCart,
+        handleChange,
+        sortData
       }}
     >
       {children}

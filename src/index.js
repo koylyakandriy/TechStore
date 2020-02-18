@@ -2,7 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom";
 import { BrowserRouter as Router } from "react-router-dom";
 
-import {ProductProvider} from "./context/context";
+import { ProductProvider } from "./context/context";
 
 import App from "./App";
 import * as serviceWorker from "./serviceWorker";

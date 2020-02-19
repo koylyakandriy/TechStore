@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { linkData } from "./linkData";
 import { socialData } from "./socialData";
-import { items } from "./productData";
+// import { items } from "./productData";
+import { client } from "./contentful";
 
 const ProductContext = React.createContext();
 
@@ -11,7 +12,6 @@ const ProductProvider = ({ children }) => {
     links: linkData,
     socialLinks: socialData,
     storeProducts: [],
-    // filteredProducts: [],
     featureProducts: [],
     singleProduct: {},
     loading: true,
@@ -31,12 +31,27 @@ const ProductProvider = ({ children }) => {
   const [filteredProducts, setFilteredProducts] = useState([]);
 
   useEffect(() => {
-    setProducts(items);
+    // setProducts(items);
+
+    client
+      .getEntries({ content_type: "techStoreProducts" })
+      .then(response => setProducts(response.items))
+      .catch(console.error);
+
+    let cart;
+    if (localStorage.getItem("cart")) {
+      cart = JSON.parse(localStorage.getItem("cart"));
+    } else {
+      cart = [];
+    }
+
+    setCart(cart);
   }, []);
 
   useEffect(() => {
-    syncStorage();
     addTotals();
+
+    localStorage.setItem("cart", JSON.stringify(cart));
   }, [cart]);
 
   const setProducts = products => {
@@ -55,7 +70,6 @@ const ProductProvider = ({ children }) => {
     setState({
       ...state,
       storeProducts,
-      // filteredProducts: storeProducts,
       featureProducts,
       singleProduct: getStorageProduct(),
       loading: false,
@@ -64,19 +78,6 @@ const ProductProvider = ({ children }) => {
     });
 
     setFilteredProducts(storeProducts);
-
-    getStorageCart();
-  };
-
-  const getStorageCart = () => {
-    let cart;
-    if (localStorage.getItem("cart")) {
-      cart = JSON.parse(localStorage.getItem("cart"));
-    } else {
-      cart = [];
-    }
-
-    setCart(cart);
   };
 
   const getStorageProduct = () => {
@@ -114,10 +115,6 @@ const ProductProvider = ({ children }) => {
     setCartTotal(totals.total);
   };
 
-  const syncStorage = () => {
-    localStorage.setItem("cart", JSON.stringify(cart));
-  };
-
   const addToCart = id => {
     let tempCart = [...cart];
     const tempProducts = [...state.storeProducts];
@@ -136,7 +133,6 @@ const ProductProvider = ({ children }) => {
     setCart(tempCart);
     openCart();
     addTotals();
-    syncStorage();
   };
 
   const setSingleProduct = id => {
@@ -202,8 +198,6 @@ const ProductProvider = ({ children }) => {
     const { storeProducts, price, company, shipping, search } = state;
     let tempProducts = [...storeProducts];
 
-    console.log("shipping:", shipping);
-
     if (company !== "all") {
       tempProducts = tempProducts.filter(item => item.company === company);
     }
@@ -219,6 +213,8 @@ const ProductProvider = ({ children }) => {
         let tempSearch = search.toLocaleLowerCase();
         let tempTitle = item.title.toLowerCase().slice(0, search.length);
         if (tempSearch === tempTitle) return item;
+
+        return null;
       });
     }
 
@@ -254,7 +250,6 @@ const ProductProvider = ({ children }) => {
         removeItem,
         clearCart,
         handleChange
-        // sortData
       }}
     >
       {children}
